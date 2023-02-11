@@ -1,0 +1,132 @@
+ 注解：
+
+ 3.1、注解，或者叫注释类型，Annotation
+
+ 3.2、注解Annotation是一种引用数据类型。编译之后也是生成xxx.class文件
+ 3.3、怎么自定义注解呢？
+	[修饰符列表] @interface 注解类型名{
+	
+	}
+3.4、注解怎么使用，用在什么地方？
+	
+	第一：注解使用是的语法格式是：
+		@注解类型名
+
+	第二：注解可以出现在类上、属性上、方法上、变量上。。。
+	注解还可以出现在注解类型上
+
+
+3.5、JDK内置的哪些注解。
+
+	java.lang包下的注解类型：
+
+            掌握：
+            Deprecated 用 @Deprecated 注释的程序元素，
+            不鼓励程序员使用这样的元素，通常是因为它很危险或存在更好的选择。
+	    标记过时方法。如果使用该方法，会报编译警告。
+ 
+            掌握：
+            Override 表示一个方法声明打算重写超类中的另一个方法声明。
+	    这个注解是给编译器参考的，和运行阶段没有关系
+	    凡是java中的方法带有这个注解的，编译器全都会进行编译检查，如果这个方法不是重写父类的方法，编译器报错。
+
+ 
+            不用掌握：
+            SuppressWarnings 指示应该在注释元素（以及包含在该注释元素中的
+            所有程序元素）中取消显示指定的编译器警告。
+3.6、元注解
+
+ 什么是元注解？
+     用来标注“注解类型”的“注解”，称为元注解
+
+ 常见的元注解：
+	Target
+	Retention
+	标识这个注解怎么保存，是只在代码中，还是编入class文件中，或者是在运行时可以通过反射访问。
+	
+        常见的元注解有哪些？
+            Target
+	     标记这个注解应该是哪种 Java 成员。
+            Retention
+	    @Documented - 标记这些注解是否包含在用户文档中。
+
+	    @Inherited - 标记这个注解是继承于哪个注解类(默认 注解并没有继承于任何子类)
+         
+        关于Target注解：
+            这是一个元注解，用来标注“注解类型”的“注解”
+            这个Target注解用来标注“被标注的注解”可以出现在哪些位置上。
+ 
+            @Target(ElementType.METHOD)：表示“被标注的注解”只能出现在方法上。
+            @Target(value={CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, MODULE, PARAMETER, TYPE})
+                表示该注解可以出现在：
+                    构造方法上
+                    字段上
+                    局部变量上
+                    方法上
+                    ....
+                    类上...
+         
+        关于Retention注解：
+            这是一个元注解，用来标注“注解类型”的“注解”
+            这个Retention注解用来标注“被标注的注解”最终保存在哪里。
+ 
+            @Retention(RetentionPolicy.SOURCE)：表示该注解只被保留在java源文件中。
+            @Retention(RetentionPolicy.CLASS)：表示该注解被保存在class文件中。
+            @Retention(RetentionPolicy.RUNTIME)：表示该注解被保存在class文件中，并且可以被反射机制所读取。
+    3.7、Retention的源代码
+
+    //元注解   
+    public @interface Retention {
+	//属性
+	RetentionPolicy value();
+    }
+     
+RetentionPolicy的源代码：
+    public enum RetentionPolicy {
+	 SOURCE,
+	 CLASS,
+	 RUNTIME
+    }
+
+    //@Retention(value=RetentionPolicy.RUNTIME)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface MyAnnotation{}
+ 
+ 
+ 
+    3.8、Target的源代码
+         
+ 
+    3.9、注解在开发中有什么用呢？
+ 
+        需求：
+            假设有这样一个注解，叫做：@Id
+            这个注解只能出现在类上面，当这个类上有这个注解的时候，
+            要求这个类中必须有一个int类型的id属性。如果没有这个属性
+            就报异常。如果有这个属性则正常执行！
+ 
+ 
+Annotation 的作用
+Annotation 是一个辅助类，它在 Junit、Struts、Spring 等工具框架中被广泛使用。
+
+我们在编程中经常会使用到的 Annotation 作用有：
+1）编译检查
+	Annotation 具有"让编译器进行编译检查的作用"。
+
+	例如，@SuppressWarnings, @Deprecated 和 @Override 都具有编译检查作用。
+
+	(01) 关于 @SuppressWarnings 和 @Deprecated，已经在"第3部分"中详细介绍过了。这里就不再举例说明了。
+
+	(02) 若某个方法被 @Override 的标注，则意味着该方法会覆盖父类中的同名方法。如果有方法被 @Override 标示，
+	但父类中却没有"被 @Override 标注"的同名方法，则编译器会报错。
+2) 在反射中使用 Annotation
+	在反射的 Class, Method, Field 等函数中，有许多于 Annotation 相关的接口。
+
+	这也意味着，我们可以在反射中解析并使用 Annotation。
+3) 根据 Annotation 生成帮助文档
+	通过给 Annotation 注解加上 @Documented 标签，能使该 Annotation 标签出现在 javadoc 中。
+
+4) 能够帮忙查看查看代码
+	通过 @Override, @Deprecated 等，我们能很方便的了解程序的大致结构。
+
+	另外，我们也可以通过自定义 Annotation 来实现一些功能。

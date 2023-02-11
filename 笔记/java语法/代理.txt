@@ -1,0 +1,215 @@
+代理模式是一种比较好理解的设计模式。简单来说就是 我们使用代理对象来代替对真实对象(real object)的访问，这样就可以在不修改原目标对象的前提下，提供额外的功能操作，扩展目标对象的功能。
+
+代理模式的主要作用是扩展目标对象的功能，比如说在目标对象的某个方法执行前后你可以增加一些自定义的操作。
+
+举个例子：新娘找来了自己的姨妈来代替自己处理新郎的提问，新娘收到的提问都是经过姨妈处理过滤之后的。姨妈在这里就可以看作是代理你的代理对象，代理的行为（方法）是接收和回复新郎的提问。
+
+静态代理
+创建一个接口，然后创建被代理的类实现该接口并且实现该接口中的抽象方法。之后再创建一个代理类，同时使其也实现这个接口。在代理类中持有一个被代理对象的引用，而后在代理类方法中调用该对象的方法。
+
+使用静态代理很容易就完成了对一个类的代理操作。但是静态代理的缺点也暴露了出来：由于代理只能为一个类服务，如果需要代理的类很多，那么就需要编写大量的代理类，比较繁琐。
+相比于静态代理来说，动态代理更加灵活。我们不需要针对每个目标类都单独创建一个代理类，并且也不需要我们必须实现接口，我们可以直接代理实现类( CGLIB 动态代理机制)。
+
+从 JVM 角度来说，动态代理是在运行时动态生成类字节码，并加载到 JVM 中的。
+
+说到动态代理，Spring AOP、RPC 框架应该是两个不得不提的，它们的实现都依赖了动态代理。
+
+动态代理在我们日常开发中使用的相对较少，但是在框架中的几乎是必用的一门技术。学会了动态代理之后，对于我们理解和学习各种框架的原理也非常有帮助。
+
+就 Java 来说，动态代理的实现方式有很多种，比如 JDK 动态代理、CGLIB 动态代理等等。
+
+guide-rpc-framework 使用的是 JDK 动态代理，我们先来看看 JDK 动态代理的使用。
+
+另外，虽然 guide-rpc-framework 没有用到 CGLIB 动态代理 ，我们这里还是简单介绍一下其使用以及和JDK 动态代理的对比。
+public class ProxyInvocationHandler implements InvocationHandler {
+	private Object target;
+	
+	public Object getTarget() {
+		return target;
+	}
+ 
+	public void setTarget(Object target) {
+		this.target = target;
+	}
+ 
+	//生成得到代理类
+	public Object getProxy() {
+		return Proxy.newProxyInstance(this.getClass().getClassLoader(), target.getClass().getInterfaces(),this);
+	}
+	
+	//处理代理实例，并返回结果
+	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+		log(method.getName());
+		//动态代理的本质就是使用反射机制来实现
+		Object result = method.invoke(target, args);
+		return result;
+	}
+	
+	public void log(String msg) {
+		System.out.println("执行了"+msg+"方法");
+	}
+}
+通过Proxy类的静态方法newProxyInstance返回一个接口的代理实例。针对不同的代理类，传入相应的代理程序控制器InvocationHandler。
+这个方法一共有 3 个参数：
+loader :类加载器，用于加载代理对象。
+interfaces : 被代理类实现的一些接口；
+h : 实现了 InvocationHandler 接口的对象；
+
+要实现动态代理的话，还必须需要实现InvocationHandler 来自定义处理逻辑。 当我们的动态代理对象调用一个方法时，
+这个方法的调用就会被转发到实现InvocationHandler 接口类的 invoke 方法来调用。
+invoke() 方法有下面三个参数：
+
+proxy :动态生成的代理类
+method : 与代理类对象调用的方法相对应
+args : 当前 method 方法的参数
+也就是说：你通过Proxy 类的 newProxyInstance() 创建的代理对象在调用方法的时候，
+实际会调用到实现InvocationHandler 接口的类的 invoke()方法。
+你可以在 invoke() 方法中自定义处理逻辑，比如在方法执行前后做什么事情。
+
+ JDK 动态代理类使用步骤
+step1:
+	定义一个接口及其实现类；
+
+step2:
+	自定义 InvocationHandler 并重写invoke方法，在 invoke 方法中我们会调用原生方法（被代理类的方法）并自定义一些处理逻辑；
+step3:
+	通过 Proxy.newProxyInstance(ClassLoader loader,Class<?>[] interfaces,InvocationHandler h) 方法创建代理对象；
+
+
+
+例子：
+1.定义发送短信的接口
+
+
+public interface SmsService {
+    String send(String message);
+}
+
+
+2.实现发送短信的接口
+
+
+public class SmsServiceImpl implements SmsService {
+    public String send(String message) {
+        System.out.println("send message:" + message);
+        return message;
+    }
+}
+
+
+
+3.定义一个 JDK 动态代理类
+
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+/**
+ * @author shuang.kou
+ * @createTime 2020年05月11日 11:23:00
+ */
+public class DebugInvocationHandler implements InvocationHandler {
+    /**
+     * 代理类中的真实对象
+     */
+    private final Object target;
+
+    public DebugInvocationHandler(Object target) {
+        this.target = target;
+    }
+
+
+    public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+        //调用方法之前，我们可以添加自己的操作
+        System.out.println("before method " + method.getName());
+        Object result = method.invoke(target, args);
+        //调用方法之后，我们同样可以添加自己的操作
+        System.out.println("after method " + method.getName());
+        return result;
+    }
+}
+
+invoke() 方法: 当我们的动态代理对象调用原生方法的时候，
+最终实际上调用到的是 invoke() 方法，然后 invoke() 方法代替我们去调用了被代理对象的原生方法。
+
+
+
+
+
+4.获取代理对象的工厂类
+
+
+public class JdkProxyFactory {
+    public static Object getProxy(Object target) {
+        return Proxy.newProxyInstance(
+                target.getClass().getClassLoader(), // 目标类的类加载
+                target.getClass().getInterfaces(),  // 代理需要实现的接口，可指定多个
+                new DebugInvocationHandler(target)   // 代理对象对应的自定义 InvocationHandler
+        );
+    }
+}
+getProxy() ：主要通过Proxy.newProxyInstance（）方法获取某个类的代理对象
+
+
+5.实际使用
+
+
+SmsService smsService = (SmsService) JdkProxyFactory.getProxy(new SmsServiceImpl());
+smsService.send("java");
+
+运行上述代码之后，控制台打印出：
+
+
+before method send
+send message:java
+after method send
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3.2. CGLIB 动态代理机制
+#3.2.1. 介绍
+JDK 动态代理有一个最致命的问题是其只能代理实现了接口的类。
+
+为了解决这个问题，我们可以用 CGLIB 动态代理机制来避免。
+
+CGLIB(Code Generation Library)是一个基于ASM的字节码生成库，它允许我们在运行时对字节码进行修改和动态生成。CGLIB 通过继承方式实现代理。很多知名的开源框架都使用到了CGLIB， 例如 Spring 中的 AOP 模块中：如果目标对象实现了接口，则默认采用 JDK 动态代理，否则采用 CGLIB 动态代理。
+
+在 CGLIB 动态代理机制中 MethodInterceptor 接口和 Enhancer 类是核心。
+
+你需要自定义 MethodInterceptor 并重写 intercept 方法，intercept 用于拦截增强被代理类的方法。
+
+
+public interface MethodInterceptor
+extends Callback{
+    // 拦截被代理类中的方法
+    public Object intercept(Object obj, java.lang.reflect.Method method, Object[] args,MethodProxy proxy) throws Throwable;
+}
+
+obj : 动态生成的代理对象
+method : 被拦截的方法（需要增强的方法）
+args : 方法入参
+proxy : 用于调用原始方法
+你可以通过 Enhancer类来动态获取被代理类，当代理类调用方法的时候，实际调用的是 MethodInterceptor 中的 intercept 方法。
+
+#3.2.2. CGLIB 动态代理类使用步骤
+定义一个类；
+自定义 MethodInterceptor 并重写 intercept 方法，intercept 用于拦截增强被代理类的方法，和 JDK 动态代理中的 invoke 方法类似；
+通过 Enhancer 类的 create()创建代理类；
+
+https://javaguide.cn/java/basis/proxy.html#_3-2-cglib-%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86%E6%9C%BA%E5%88%B6
+
+
+

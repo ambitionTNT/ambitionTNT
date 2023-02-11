@@ -1,0 +1,331 @@
+1、final
+  1、final是java语言中的一个关键字。
+  2、final表示最终的，不可变的。
+  3、final可以修饰变量以及方法，还有类等。  
+  4、final修饰的方法？、
+	final修饰的方法不能被覆盖，被重写。
+	如何父类不加 final ，子类加final呢？
+	final不是权限：
+	final控制不了能不能调用的问题，final管的是最后，不能改变的意思啦。。。
+
+  5、final修饰的变量？
+	final修饰的局部变量一旦赋值，不能重新赋值。
+	final修饰的变量只能赋一次值。
+  6、final修饰的类？
+	final修饰的类，不能再被继承。
+  7、final修饰的变量是引用？
+        final修饰的引用只能指向一个对象。
+	对象里面的数据能改变吗？ 
+  8、final修饰实例变量
+	实例变量的默认值赋值是在构造方法执行的时候。
+	所以 final修饰的实例变量 只能赋值一次，所以要赶在系统赋默认值之前赋值。
+	结论：final修饰的实例变量，系统不负责赋默认值，需要手动赋值，
+	这个手动赋值可以在构造方法中或者变量定义时。
+ 9、final修饰的实例变量一般使用static修饰 ，static final 变量 表示常量。
+	常量和static变量一样 存储在方法区，通常全部大写，每个单词之间采用下划线衔接。
+	常量的访问权限一般都是公开的。public static final
+
+
+抽象类：
+   1、什么是抽象类
+     顾名思义是抽象的一种类。抽象类无法实例化，无法创建对象。
+     因为类在现实宇宙中是不存在的，抽象类是：类和类之间有共同特征，
+     将这些具有共同特征的类再进一步抽象形成了抽象类。由于类本身是不存在的，
+     所以抽象类无法创建对象。
+   2、抽象类属于什么类型
+	抽象类也属于引用数据类型。
+	语法：
+	    [修饰符列表] abstract class 类名{
+		类体;
+	    }
+   3、抽象类怎么定义
+
+   4、抽象类是无法实例化、无法创建对象的，所以抽象类是用来被继承的。
+       子类继承抽象类，子类可以实例化对象。
+   5、final 和abstract不能联合使用，这两个是对立的。
+   6、抽象类的子类可以是抽象类。
+   7、抽象类虽然无法实例化，但是也存在构造方法。构造方法是供子类使用的。
+   8、抽象类关联到一个概念：抽象方法。
+	什么是抽象方法？
+	抽象方法表示没有实现的方法，没有方法体的方法。例如：
+	public abstract void doSome();
+	特点1：没有方法体，以分号结尾。
+	特点2：前面修饰符为 abstract关键字。
+   9、抽象类中不一定有抽象方法，抽象方法必须出现在抽象类中。
+   10、一个非抽象类的继承抽象类， 必须把抽象类中的抽象方法实现了。
+       这是java语法上强行规定的，必须的，不然编译器就报错。
+
+
+接口：
+   1、什么是接口
+      接口也是一种引用数据类型，接口是完全抽象的（抽象类是半抽象）
+	编译之后也是一个class文件
+   2、接口怎么定义，语法是什么？
+       [修饰符列表] interface 接口名{}
+   3、接口与接口之间是可以继承的，且支持多继承，一个接口可以继承多个接口。
+   4、接口中只包含两部分内容，一部分是：常量。public final static
+   另一部分是：抽象方法。:public abstract
+   5、抽象方法中的抽象方法，public abstract 可以省略不写。且接口中的抽象方法都是public类型。
+   6、接口中的方法都是抽象方法，所以接口中的方法都没有方法体。
+   7、接口中的常量public final static可以省略。
+   8、类和类之间叫做继承，类和接口之间叫做实现。
+	使用关键字：implements。
+   9、当一个非抽象类实现接口的话，必须把接口中的所有方法给实现了。
+   10、多态和接口可以联合使用，使用接口的引用变量 指向 实现类
+   11、一个类可以实现多个接口。在这个类中要实现所有接口中的抽象方法 。
+
+
+   12、接口与接口之间在进行强制类型转换的时候，没有继承关系也可以强转。
+       但是运行时可能会出现ClassCastException异常。
+   13、class pig extends Animal implements Flyable{},接口是可以插拔的。是可以扩展类的功能的。
+	extends和implements可以共存，extends在前implements在后。
+接口的应用：
+	接口在开发中的作用，类似于多态在开发中的作用。
+	多态：面向抽象编程。
+接口是完全抽象的，所以以后可以面向接口编程 。
+面向接口编程。可以降低程序的耦合度，提高程序的扩展度。符合OCP原则。
+接口的使用离不开多态机制（接口+多态=解耦合）
+任何一个接口都有调用者和实现着，接口可以将调用者和实现者解耦合。 
+
+
+is-a has-a like-a
+is a:
+	Cat is a Animal(猫是一个动物)
+	凡是能满足is a的表示 “继承关系”
+has a:
+ I has a pen(我有一支笔)
+ 凡是能够满足has a  关系的表示“关联关系”.
+ 关联关系通常以“属性”的形式存在。
+
+like a:
+cooker like a FoodMenu（厨师像一个菜单一样）
+凡是能够满足like a关系的表示“实现关系”
+实现关系通常是：类实现接口。  
+ 抽象与接口有什么区别：
+抽象类是半抽象的。
+接口是完全抽象的。
+抽象类中有构造方法。
+接口中没有构造方法。
+
+接口和接口之间支持多继承
+类和类之间为单继承。
+
+一个类可以实现多个接口。
+一个抽象类只能继承一个类（单继承）
+接口中只允许出现常量和抽象方法。
+
+以后接口使用的比抽象类多。一般抽象类使用的还是少。
+接口一般都是对“行为”的抽象。
+
+package和import机制：
+1、为什么使用package？
+package是java中包机制。包机制的作用是为了方便程序的管理。
+不同功能的类分别存放在不同的包下。
+
+2、package怎么用：
+package是一个关键字，后面加报名。
+package com.xxxx.xxx放在第一句，这样这个源文件的类都打入了这个com.xxxx里面了。
+3、包名的命名规范。
+公司域名倒序+项目名+模块名+功能名。
+
+
+关于java语言中的package和import机制：
+
+1、为什么要使用package？
+package是java中包机制。包机制的作用是为了方便程序的管理。
+不同功能的类分别存放在不同的包下。（按照功能划分的，不同的
+软件包具有不同的功能。）
+
+2、package怎么用？
+package是一个关键字，后面加包名。例如：
+package com.bjpowernode.javase.chapter17;
+注意：package语句只允许出现在java源代码的第一行。
+
+3、包名有没有命名规范？有
+一般都采用公司域名倒序的方式（因为公司域名具有全球唯一性。）
+包名命名规范：
+公司域名倒序 + 项目名 + 模块名 + 功能名
+
+4、对于带有package的java程序怎么编译？怎么运行？
+
+采用之前的编译和运行不行了。
+类名不再是：HelloWorld了。
+类名是：com.bjpowernode.javase.chapter17.HelloWorld
+
+编译：
+javac -d . HelloWorld.java
+解释一下：
+	javac 负责编译的命令
+	-d		带包编译
+	.		代表编译之后生成的东西放到当前目录下（点代表当前目录）
+	HelloWorld.java  被编译的java文件名。
+
+运行：
+java com.bjpowernode.javase.chapter17.HelloWorld
+
+5、关于import的使用。
+
+import什么时候使用？
+A类中使用B类。
+A和B类都在同一个包下。不需要import。
+A和B类不在同一个包下。需要使用import。
+java.lang.*;这个包下的类不需要使用import导入。
+
+import怎么用？
+import语句只能出现在package语句之下，class声明语句之上。
+import语句还可以采用星号的方式。
+import 完整类名;
+            import 包名.*;
+ 
+            import java.util.Scanner; // 完整类名。
+ 
+            // 同学的疑问：这样是不是效率比较低。
+            // 这个效率不低，因为编译器在编译的时候，会自动把*变成具体的类名。
+            import java.util.*;
+ 
+            // 想省懒劲你不能太省了。
+            import java.*; 这是不允许的，因为在java语言中规定，这里的*只代表某些类的名字。
+ 
+
+访问权限控制：
+分类：
+private  私有
+protected 受保护
+public    公开
+          默认
+private 表示 私有的，只能在本类中访问。
+public 表示公开的，在任何位置都可以访问
+protected 表示 受保护的。
+“默认”表示只能在本类，以及同包下访问。
+让
+
+访问控制修饰符       本类      同包       子类      任意位置  
+----------------------------------------------------------------
+public                可以      可以        可以      可以
+protected             可以      可以        可以      不可以
+默认                  可以      可以        不可以（不在一个包    不可以
+private               可以      不可以      不可以     不可以
+
+这个不要死记硬背，自己下去之后编写代码自己测试。
+ 
+        范围从大到小排序：public > protected > 默认 > private
+     protected:子类可以访问，无论是否在同一个包中，其他在不同包不可以访问
+     默认：在同一个包内 随便访问，但是不同的包不能访问。
+    1.3、访问控制权限修饰符可以修饰什么？
+        属性（4个都能用）
+        方法（4个都能用）
+        类（public和默认能用，其它不行。）
+        接口（public和默认能用，其它不行。）
+        .....
+
+JDK类库的根类：object
+
+ *这个老祖中类每个类都要继承。
+ *object类中有哪些常用的方法？
+     我们去哪找？
+     第一种方法：去查阅源码（比较的麻烦）
+     第二种方法：去查阅java的类库的帮助文档。
+    什么是API？
+    应用程序编程接口。
+    整个JDK的类库就是一个Javase的文档。
+    每个API会配置一套帮助文档。
+    SUN公司提前写好的这套类库就是API。
+
+   目前我们只需学习：
+   protected Object clone()----负责对象克隆
+   int hashCode()--------------获取对象哈希值的一个方法。
+   boolean equals(Object obj)--判断两个对象是否相等
+   String toString()  ---------将对象转换成字符串形式
+   protected void finalize()---垃圾回收器负责调用的方法。
+
+
+  public String toString(){
+  //Returns a string representation of the object. 
+  In general, the toString method returns a string that "textually represents" this object.
+  The result should be a concise but informative representation 
+  that is easy for a person to read. It is recommended that all subclasses override this method
+  }
+
+  public boolean equals(Object obj){}
+  Indicates whether some other object is "equal to" this one.
+  判断两个对象是否相等。
+
+
+  String重写了toString()和equals()方法。
+	比较两个字符串不能使用==，必须使用equals
+  大结论：
+     java中声明类型的数据可以使用“==”判断
+        java中基本数据类型比较是使用==
+     java中声明类型的数据需要使用equails判断
+        java中所有的引用数据类型统一使用equals方法来判断是否相等。
+toString()方法
+   以后所有类的toString()方法是需要重写的。
+   重写规则，越简单越明了就好。
+   System.out.prinln(引用);自动回调用"引用"的toStrng()
+   方法。String类是SUN写的，toString方法已经重写了。
+equals()方法
+  以后所有类的equals方法也需要重写，因为Object中的equals方法比较的是两个对象
+  的内存地址，我们应该比较内容，所有需要重写。
+
+  重写规则：自己定，主要是看什么和什么相等时表示两个对象相等。
+  String类是SUN编写的，所有String类的equals方法重写了
+
+	1.显示参数命名为obtherObject，稍后需要将它强制转换成另一个名为other的变量。
+	2.检测this与otherObject是否相等：
+		if(this ==  otherObject) return ture;
+	3.检测otherObject是否为nll，如果是nll，返回false。
+		if(otherObject == null） return false;
+	4.比较this与otherObject的类。如果eqal的语句可以在子类中改变，就使用getClass检测：
+		if(getClass()!=otherObejct.getClass()) return false;
+	     如果所有的子类都有相同的相等性语义，可以使用instanceof 检测：
+		if(!(otherObject instanceof ClassName)) return false;
+	5.将otherObejct强制转换为相应类类型的变量：
+		ClassName other = (ClassName) otherObject
+	6.现在根据相等性概念的要求来比较字段。使用==比较基本类型字段，使用objects.equals（a,b）比较对象字段。
+
+finalize()方法：
+   
+关于Object类中的finalize()方法。（非重点  非重点  非重点  了解即可。）
+
+1、在Object类中的源代码：
+	protected void finalize() throws Throwable { }
+
+	GC：负责调用finalize()方法。
+
+2、finalize()方法只有一个方法体，里面没有代码，而且这个方法是protected修饰的。
+
+3、这个方法不需要程序员手动调用，JVM的垃圾回收器负责调用这个方法。
+不像equals toString，equals和toString()方法是需要你写代码调用的。
+finalize()只需要重写，重写完将来自动会有程序来调用。
+
+4、finalize()方法的执行时机：
+	当一个java对象即将被垃圾回收器回收的时候，垃圾回收器负责调用
+	finalize()方法。
+
+5、finalize()方法实际上是SUN公司为java程序员准备的一个时机，垃圾销毁时机。
+如果希望在对象销毁时机执行一段代码的话，这段代码要写到finalize()方法当中。
+
+6、静态代码块的作用是什么？
+	static {
+		....
+	}
+	静态代码块在类加载时刻执行，并且只执行一次。
+	这是一个SUN准备的类加载时机。
+
+	finalize()方法同样也是SUN为程序员准备的一个时机。
+	这个时机是垃圾回收时机。
+
+7、提示：	
+	java中的垃圾回收器不是轻易启动的，
+	垃圾太少，或者时间没到，种种条件下，
+	有可能启动，也有可能不启动。
+
+hashCode方法：
+在Object中的hashCode方法是怎样的？
+	public native int hashCode();
+
+	这个方法不是抽象方法，带有native关键字，底层调用C++程序。
+
+hashCode()方法返回的是哈希码：
+	实际上就是一个java对象的内存地址，经过哈希算法，得出的一个值。
+	所以hashCode()方法的执行结果可以等同看做一个java对象的内存地址。

@@ -1,0 +1,237 @@
+反射机制！
+在程序运行期间，java运行时系统始终为所有对象维护一个运行时类型表示。这个信息会跟踪每个对象所述的类。
+虚拟机利用运行时类型信息选择要执行的正确方法。
+使用特殊的java类访问这些信息，这就是Class
+虚拟机为每个类型管理唯一的Class对象。
+getName()方法就获得这个类的属性，是类名
+
+
+1、反射机制的作用：
+   通过反射机制可以操作字节码文件。
+   通过反射机制可以操作代码片段class文件
+
+2、反射机制相关类在哪个包下？
+	java.lang.reflect.*;
+
+3、反射机制相关的重要的类有哪些？
+	java.lang.Class:代表整个字节码，代表一个类型。
+
+	java.lang.reflect.Method:代表字节码中的方法字节码。
+
+	java.lang.reflect.Constructor:代表字节码中的构造方法字节码。
+
+	java.lang.reflect.Field:代表字节码中的属性字节码。
+
+  java.lang.Class：代表整个字节码，代表一个类型，代表整个类。
+ 
+        java.lang.reflect.Method：代表字节码中的方法字节码。代表类中的方法。
+ 
+        java.lang.reflect.Constructor：代表字节码中的构造方法字节码。代表类中的构造方法
+ 
+        java.lang.reflect.Field：代表字节码中的属性字节码。代表类中的成员变量（静态变量+实例变量）。
+ 
+        java.lang.Class：
+            public class User{
+                // Field
+                int no;
+ 
+                // Constructor
+                public User(){
+                 
+                }
+                public User(int no){
+                    this.no = no;
+                }
+ 
+                // Method
+                public void setNo(int no){
+                    this.no = no;
+                }
+                public int getNo(){
+                    return no;
+                }
+            }
+
+要操作一个类的字节码，需要首先获取到这个类的字节码，怎么获取java.lang.Class实例？
+    三种方式
+        第一种：Class c = Class.forName("完整类名带包名");
+	第二种：Class c = 对象.getClass();
+        第三种：Class c = 任何类型.class;
+
+3、关于JDK中自带的类加载器：
+	 3.1、什么是类加载器？
+        专门负责加载类的命令/工具。
+        ClassLoader
+     
+    3.2、JDK中自带了3个类加载器
+        启动类加载器:rt.jar --------- 父加载器
+        扩展类加载器:ext/*.jar
+        应用类加载器:classpath -
+     
+    3.3、假设有这样一段代码：
+        String s = "abc";
+         
+        代码在开始执行之前，会将所需要类全部加载到JVM当中。
+        通过类加载器加载，看到以上代码类加载器会找String.class
+        文件，找到就加载，那么是怎么进行加载的呢？
+ 
+            首先通过“启动类加载器”加载。
+                注意：启动类加载器专门加载：C:\Program Files\Java\jdk1.8.0_101\jre\lib\rt.jar
+                rt.jar中都是JDK最核心的类库。
+             
+            如果通过“启动类加载器”加载不到的时候，
+            会通过"扩展类加载器"加载。
+                注意：扩展类加载器专门加载：C:\Program Files\Java\jdk1.8.0_101\jre\lib\ext\*.jar
+ 
+     
+            如果“扩展类加载器”没有加载到，那么
+            会通过“应用类加载器”加载。
+                注意：应用类加载器专门加载：classpath中的类。
+     
+    3.4、java中为了保证类加载的安全，使用了双亲委派机制。
+        优先从启动类加载器中加载，这个称为“父”
+        “父”无法加载到，再从扩展类加载器中加载，
+        这个称为“母”。双亲委派。如果都加载不到，
+        才会考虑从应用类加载器中加载。直到加载
+        到为止。
+
+	1、回顾反射机制
+ 
+    1.1、什么是反射机制？反射机制有什么用？
+        反射机制：可以操作字节码文件
+        作用：可以让程序更加灵活。
+ 
+    1.2、反射机制相关的类在哪个包下？
+        java.lang.reflect.*;
+ 
+    1.3、反射机制相关的主要的类？
+        java.lang.Class
+        java.lang.reflect.Method;
+        java.lang.reflect.Constructor;
+        java.lang.reflect.Field;
+ 
+    1.4、在java中获取Class的三种方式？
+        第一种：     
+            Class c = Class.forName("完整类名");
+        第二种：
+            Class c = 对象.getClass();
+        第三种：
+            Class c = int.class;
+            Class c = String.class;
+ 
+    1.5、获取了Class之后，可以调用无参数构造方法来实例化对象
+ 
+        //c代表的就是日期Date类型
+        Class c = Class.forName("java.util.Date");
+	
+        //实例化一个Date日期类型的对象
+        Object obj = c.newInstance();
+ 
+        一定要注意：
+            newInstance()底层调用的是该类型的无参数构造方法。
+            如果没有这个无参数构造方法会出现"实例化"异常。
+     
+    1.6、如果你只想让一个类的“静态代码块”执行的话，你可以怎么做？
+        Class.forName("该类的类名");
+        这样类就加载，类加载的时候，静态代码块执行！！！！
+        在这里，对该方法的返回值不感兴趣，主要是为了使用“类加载”这个动作。
+     
+    1.7、关于资源路径问题？
+
+     Class资源问题
+
+     Class类提供了一个很有用的服务可以查找资源文件。
+	1、 获得拥有资源的类的Class对象，例如ResourceTest.class
+	
+	2、有些方法，如ImageIcon类的getImage方法，接受描述资源位置的URL.
+		URL url = cl.getResource("about,gif");
+	3、否则使用getResourceAsStream方法得到一个输入流来读取文件中的数据。
+	这里的重点是java虚拟机知道如何查找一个类，所以他能搜索相同位置上的关联资源。路径要明确。
+ 
+        String path = Thread.currentThread().getContextClassLoader()
+                          .getResource("写相对路径，但是这个相对路径从src出发开始找").getPath();    
+ 
+        String path = Thread.currentThread().getContextClassLoader()
+                          .getResource("abc").getPath();    //必须保证src下有abc文件。
+ 
+        String path = Thread.currentThread().getContextClassLoader()
+                          .getResource("a/db").getPath();   //必须保证src下有a目录，a目录下有db文件。
+         
+        String path = Thread.currentThread().getContextClassLoader()
+                          .getResource("com/bjpowernode/test.properties").getPath();    
+                          //必须保证src下有com目录，com目录下有bjpowernode目录。
+                          //bjpowernode目录下有test.properties文件。
+ 
+        这种方式是为了获取一个文件的绝对路径。（通用方式，不会受到环境移植的影响。）
+        但是该文件要求放在类路径下，换句话说：也就是放到src下面。
+        src下是类的根路径。
+ 
+        直接以流的形式返回：
+        InputStream in = Thread.currentThread().getContextClassLoader()
+                                .getResourceAsStream("com/bjpowernode/test.properties");
+
+	
+
+
+ 
+    1.8、IO + Properties，怎么快速绑定属性资源文件？
+ 
+        //要求：第一这个文件必须在类路径下
+        //第二这个文件必须是以.properties结尾。
+        ResourceBundle bundle = ResourceBundle.getBundle("com/bjpowernode/test");
+        String value = bundle.getString(key);
+
+	
+
+ 
+2、今日反射机制的重点内容
+    2.1、通过反射机制访问对象的某个属性。
+    2.2、通过反射机制调用对象的某个方法。
+    2.3、通过反射机制调用某个构造方法实例化对象。
+    2.4、通过反射机制获取父类以及父类型接口。
+
+
+
+    可变长度参数
+    int... args 这就是可变长度参数
+    语法是：类型...  （注意：一定是3个点。）
+
+    1、可变长度参数要求的参数个数是：0~N个。
+    2、可变长度参数在参数列表中必须在最后一个位置上，而且可变长度参数只能有1个。
+    3、可变长度参数可以当做一个数组来看待
+
+ ---------------------------------------------------------------------------------------------------------------------------------------------
+
+利用反射分析类的能力
+    在java.lang.reflect包中存在3个类Field、Method和Constructor分别用于描述类的字段、方法和构造器，这三个类都有一个叫做getName的方法，用来返回字段
+    方法或构造器的名称。
+    Field类有一个getType方法，用来返回描述字段类的一个对象，这个对象的类型同样是Class。Method和Contructor类有报告参数类型的方法，Method类还有一个报告返回类型
+    的方法，这三个类都有一个名为getodifiers的方法，它将返回一个整数，用不同的0/1位描述所使用的修饰符，public和static。还可以利用java.lang.reflect包中的Modifier类
+    的静态方法分析getModifiers返回的这个整数。
+    Class类中的getFields、getMethods和getonstructors方法将返回这个类支持的公共字段，方法和构造器数组，其中包括超类的公共成员、
+     Class类中的getDeclaredFields、getDeclaredMethods和getDeclaredConstructors方法将返回这个类支持的全部字段，全部方法和全部构造器数组但不包括超类的成员。
+    
+利用反射在运行时分析对象
+	 使用getDeclaredFields可以获得所有的数据字段，然后使用setAccessible遍历方法将所有的字段可以设置为可以访问
+	 在使用f.get()或者f.set()方法就可以进行进行操作对象的实例
+	实现一个通用的toString方法
+
+
+
+使用反射编写泛型数组代码o9
+	实现一个通用的动态创建数组
+
+
+调用任意方法和构造器
+	在java中 可以使用Field类的get方法查看一个对象的字段。与之类似，Method类有一个invoke方法，允许你调用包装在当前Method方法中的方法。invoke方法的签名是:Object invoke
+
+
+
+
+
+
+
+
+
+
+

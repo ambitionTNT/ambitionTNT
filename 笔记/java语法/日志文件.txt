@@ -1,0 +1,23 @@
+调试技巧
+1.日志代理是一个子类的对象，他可以截获方法调用，记录日志，然后调用超类中的方法。例如，
+如果调用Random类的nextDouble方法时出现了问题，就可以如下创建一个代理对象，作者是匿名子类的实例：
+Random generator = new Random(){
+	public double nextDouble(){
+		double result = super.nextDouble();
+		Logger.getGlobal().info("nextDouble: "+result);
+		return result;
+	}	
+}
+只要调用nextDouble方法，就会生产一个日志信息
+想要知道谁调用了这个方法，可以生辰一个堆栈轨迹。
+2、不一定要通过捕获异常来生成堆栈轨迹。只要在代码的某个位置插入下面这条语句就可以获得堆栈轨迹：
+	Thread.dumpStack();
+3、通常，将程序错误计入一个文件会很有用。不过，错误会发送到System.err，而不是System.out。因此，不能通过运行下面的
+的命令来获取：
+	java Myprogram > erros.txt
+   而是：
+	java Myprogram 2> erros.txt
+4、java虚拟机增加了对Java应用程序的监控和管理支持。允许在虚拟机中安装代理来跟踪内存消耗、线程使用、类加载等情况。
+   在Oracle文档中有Jconsole的使用
+5、java任务器是一个专业级性能分析的诊断工具，包括在Oracle JDK中，可以免费用于开发。
+
